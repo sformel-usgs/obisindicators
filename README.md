@@ -66,3 +66,48 @@ project                                                                         
     * set chunk's `eval` is false
     * then put markdown into the vignette to display the output image (or other html)
     * assets go in `vignettes` or in `man/figures` [[ref](https://github.com/r-lib/pkgdown/issues/280#issuecomment-287645977))
+
+
+#Don Waller conversation 1/12/23
+
+Don talked with Kyle Copas at COP15.  He has been aware of GBIF and been involved with iDIV. Happy to get involved again.
+
+His predecessor surveyed 1000 forest and pairaie sites and surveryed plant commnunities.
+Don Waller resurveyed 400 of these sites multiple times. May do it again
+
+Hundreds of species across hundreds of sites across 50 years. Also lots of plant trait data (up to 30ish traists) published recently as a data base
+Also constructed phylogenetic tree for all the plant species in Wisconsisn (! sames as NE America)
+
+Excited to see how databases like GBIF are being tied to policies and initiatives.  He wrote a chapter on monitoring.  He has been peripherally involved with NEON. He is a big believer in on-the-ground data, which NEON is not as much.  He is also focused in the bulk of forest diversity, which occurrs in the understory.  This can't be quantified by satellite.  Really into plant population work.
+
+There are several teams churning out papers based on sPlot, overseen by iDIV.  Chris Verhayen, Hilge...someone. sPLOT will take just about any vegetation data.  Forestry plot is much more discerning.
+
+He wants to know, how do vegetation and plant functional trait data fit into GBIF?
+
+We are working on trying to get NEON's vegetation plot data shared.  Don wasn't aware that existed.
+Shared NEON bird point count data.
+
+ESA Public Affairs - Don is on it. There is some effort he will tell us about in email.
+NSCEN: the evolutionary version of NCEAS, in Durham. Headed by Fred Allendorf.  
+- Don didn't know there are genetic data in GBIF
+
+- He recommends we get in touch with Bob Peat's vegetation in NC. Abby says she has spoken with Bob, needs to revive relationship.
+
+Wisconsin is included in Forest Replot. SO if We got Forest Replot, we would get Wisoncins, not sure about Peat data.  But Forest Replot can be persnickety about sharing data.
+Wisconsin data can be shared directly, probably a best starting point. Then we could use that to convince other forest replot folks to contribute.
+
+Wisonsin data is in spreadsheets in two forms.
+- Long form (Abby says this is probably more helpful)
+- Community matrix
+
+We would probably have event table about quadrats, can use parent/child events
+Frequency as separate table would also work.
+They have soil chemistry and landscape (1,3,5 km zones around each site) data.
+We want all data (including historic)
+
+- There will be taxonomic disagreement over time in this data set (he calls it data synchronization)
+- We have filtered data that syncs up with modern taxa names
+- Extracting original name might have to be a secondary goal to update via a machine mapping. Don will send links to UW library database and Oppenhauer database.
+
+We could do a writeup highlighting how the data were passed from researcher to researcher
+
