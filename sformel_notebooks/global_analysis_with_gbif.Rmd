@@ -626,6 +626,7 @@ map <- gmap_discrete(
 #         scale = 1,
 #         limitsize = FALSE)
 
+# [<img src="../static/img/ES100_global_2010s_res5_OBIS+GBIF2023-01-09.png" alt="Global ES100 using GBIF + OBIS for the 2010s" width="90%"/>](https://github.com/sformel-usgs/obisindicators/tree/main/static/img/ES100_global_2010s_res5_OBIS+GBIF2023-01-09.png)
 ```
 
-[<img src="../static/img/ES100_global_2010s_res5_OBIS+GBIF2023-01-09.png" alt="Global ES100 using GBIF + OBIS for the 2010s" width="90%"/>](https://github.com/sformel-usgs/obisindicators/tree/main/static/img/ES100_global_2010s_res5_OBIS+GBIF2023-01-09.png)
+
