@@ -109,5 +109,15 @@ We want all data (including historic)
 - We have filtered data that syncs up with modern taxa names
 - Extracting original name might have to be a secondary goal to update via a machine mapping. Don will send links to UW library database and Oppenhauer database.
 
-We could do a writeup highlighting how the data were passed from researcher to researcher
+We could do a writeup highlighting how the data were passed from researcher to researcher.
+
+Steve will start GBIF ticket
+
+
+To do list for obisindicators fork:
+
+Render better lores maps for vignette
+Remove hi-res maps
+Add ES50 vignette
+Add vignette about how you got to the place you did after trying arrow and dask, etc.
 
