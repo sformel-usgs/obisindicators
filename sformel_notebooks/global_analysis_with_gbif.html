@@ -11,7 +11,7 @@
 
 <meta name="author" content="Stephen Formel" />
 
-<meta name="date" content="2023-01-12" />
+<meta name="date" content="2023-01-13" />
 
 <title>Examining Global Biodiversity with OBIS and GBIF Data</title>
 
@@ -359,7 +359,7 @@ pre code {
 <h1 class="title toc-ignore">Examining Global Biodiversity with OBIS and
 GBIF Data</h1>
 <h4 class="author">Stephen Formel</h4>
-<h4 class="date">2023-01-12</h4>
+<h4 class="date">2023-01-13</h4>
 
 </div>
 
@@ -387,6 +387,63 @@ combining the two takes it to another level. Options for tackling this
 volume of data include increasing the memory in your cluster or
 splitting up the analysis into more manageable chunks. Here we
 demonstrate the latter.</p>
+</div>
+<div id="summarizing-exploratory-analysis" class="section level2">
+<h2>Summarizing Exploratory Analysis</h2>
+<p>I had to make the analysis work on one of three resources:</p>
+<ol style="list-style-type: decimal">
+<li>My government laptop:
+<ul>
+<li>Has 12th Gen Intel(R) Core(TM) i7-1265U 1.80 GHz with 32 GB of
+RAM</li>
+</ul></li>
+<li>The USGS HPC Denali
+<ul>
+<li>A single node has Two 20-core 2.4 Ghz Intel Xeon Gold 6148
+processors (Skylake) with 192 GB RAM (4.8 GB/core)</li>
+</ul></li>
+<li>An AWS cloud instance with 8 cpu and 32 GB of RAM</li>
+</ol>
+<div id="arrow-dask-and-spark-are-not-enough" class="section level3">
+<h3>arrow, dask and spark are not enough</h3>
+<p>The data are ~ 185 GB, representing 2.4 billion records and XX
+columns. The parquet file format helps, but generally chokes when trying
+to calculate the diversity metrics because:</p>
+<ol style="list-style-type: decimal">
+<li>The biodiversity indices are not simple summary statistics, like
+mean.</li>
+<li>The data needs to be grouped by h3 cells. At high resolutions, this
+means there are millions of cells, and the parquet file is not
+partitioned by h3 cell. This means you either need a large amount of
+memory to hold the entire dataset while you compute the indices, or you
+need to repartition the data after indexing by cell, so that the indices
+can be calculated in subsets of cells.</li>
+</ol>
+<p>As the <a href="https://docs.dask.org/en/stable/best-practices.html">dask
+documentation</a> points out, sometimes you need to chunk up your data.
+I tried using dask and spark in addition to R arrow but stopped putting
+effort into those methods because I was less comfortable with python and
+java then R and it became apparent that no matter what I would have to
+process the data in chunks to compute the global data set on the
+resources I had access to. The R package sparklyr required installation
+of a Spark environment, something I couldn’t do without IT intervention,
+so I didn’t pursue it. Similarly, while it was easy to spin up a dask
+cluster on AWS, I couldn’t easily do that on our HPC, so I didn’t put
+effort into pursuing it. But going forward, both options could probably
+accomplish the same thing as this R work flow.</p>
+</div>
+<div id="binned-values-are-easier-to-interpret-than-continuous" class="section level3">
+<h3>binned values are easier to interpret than continuous</h3>
+</div>
+<div id="hurlbert-index-esi-vs-traditional-biodiversity-metrics" class="section level3">
+<h3>Hurlbert Index (ESi) vs Traditional Biodiversity metrics</h3>
+</div>
+<div id="es50-vs-es100" class="section level3">
+<h3>ES50 vs ES100</h3>
+</div>
+<div id="using-the-h3-grid-pros-and-cons" class="section level3">
+<h3>Using the h3 grid: pros and cons</h3>
+</div>
 <div id="strategy-for-analysis" class="section level3">
 <h3>Strategy for analysis</h3>
 <p>We’re going to visualize our biodiversity values as h3 hexagons and

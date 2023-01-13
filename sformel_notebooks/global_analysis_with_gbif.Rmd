@@ -39,6 +39,38 @@ OBIS is small enough to analyse by itself on a decent laptop computer or a small
 
 But adding GBIF has an order of magnitude more records than OBIS, so combining the two takes it to another level.  Options for tackling this volume of data include increasing the memory in your cluster or splitting up the analysis into more manageable chunks.  Here we demonstrate the latter.
 
+## Summarizing Exploratory Analysis
+
+I had to make the analysis work on one of three resources:
+
+1. My government laptop:
+   - Has 12th Gen Intel(R) Core(TM) i7-1265U   1.80 GHz with 32 GB of RAM
+   
+2. The USGS HPC Denali
+   - A single node has Two 20-core 2.4 Ghz Intel Xeon Gold 6148 processors (Skylake) with 192 GB RAM (4.8 GB/core)
+   
+3. An AWS cloud instance with 8 cpu and 32 GB of RAM
+
+### arrow, dask and spark are not enough
+
+The data are ~ 185 GB, representing 2.4 billion records and XX columns.  The parquet file format helps, but generally chokes when trying to calculate the diversity metrics because:
+
+1. The biodiversity indices are not simple summary statistics, like mean.
+1. The data needs to be grouped by h3 cells. At high resolutions, this means there are millions of cells, and the parquet file is not partitioned by h3 cell.  This means you either need a large amount of memory to hold the entire dataset while you compute the indices, or you need to repartition the data after indexing by cell, so that the indices can be calculated in subsets of cells.
+
+As the [dask documentation](https://docs.dask.org/en/stable/best-practices.html) points out, sometimes you need to chunk up your data. I tried using dask and spark in addition to R arrow but stopped putting effort into those methods because I was less comfortable with python and java then R and it became apparent that no matter what I would have to process the data in chunks to compute the global data set on the resources I had access to. The R package sparklyr required installation of a Spark environment, something I couldn't do without IT intervention, so I didn't pursue it. Similarly, while it was easy to spin up a dask cluster on AWS, I couldn't easily do that on our HPC, so I didn't put effort into pursuing it. But going forward, both options could probably accomplish the same thing as this R work flow.
+
+### binned values are easier to interpret than continuous
+
+We created maps with both continuous color schemes and with binned color schemes.  We found that in the former it was difficult to differentiate the middle values.  Our conclusion was that precise values were not as useful as being able to quickly understand where biodiversity was extremely low, high, and what the approximate "normal" was for various regions.
+
+### Hurlbert Index (ESi) vs Traditional Biodiversity metrics
+
+### ES50 vs ES100
+
+### Using the h3 grid: pros and cons
+
+
 ### Strategy for analysis
 
 We're going to visualize our biodiversity values as h3 hexagons and by decade, since these are two useful units for aggregating the data into a meaningful amount of time and space.  So our strategy will be to:
