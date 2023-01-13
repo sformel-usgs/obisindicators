@@ -1,0 +1,55 @@
+---
+title: "Globdal Biodiversity Map Work Flow"
+author: "Stephen Formel"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Collect Data
+
+1. download parquets
+
+```{r collect data}
+
+
+```
+
+## Reduce and Clean Data
+
+1. select columns
+1. filter data for time
+1. filter data for quality
+1. 
+```{r reduce and clean data}
+
+```
+
+## Join GBIF and OBIS data
+
+1. join
+1. remove duplicates
+
+```{r join gbif and obis}
+
+```
+
+## Generate h3 indices
+```{r generate h3 indices}
+
+```
+
+## Generate biodiversity indices
+
+```{r generate biodiversity indices}
+
+```
+
+## Generate Map
+
+```{r generate map}
+
+```

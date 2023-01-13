@@ -1,0 +1,267 @@
+---
+title: "Example Maps for GBIF-USA ES50 1960 - 2022"
+author: "Stephen Formel and Abby Benson"
+date: "`r Sys.Date()`"
+output: pdf_document
+classoption: landscape
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, out.height = "100%", out.width = "100%")
+
+library(magick)
+library(grid)
+library(gridExtra)
+library(ggplot2)
+library(cowplot)
+
+```
+
+
+# 1960 - 2022 Aggregated
+
+```{r all years, echo=FALSE}
+
+lf <- list.files(path = "../output/tests/CONUS/", pattern = ".*1960-2022.*.png", full.names = TRUE)
+
+image_list <- lapply(lf, function(x){
+ x %>% 
+    image_read() %>% 
+    rasterGrob()
+
+})
+
+plot_grid(image_list[[4]],
+          labels = lf[4],
+          label_size = 5)
+
+```
+\newpage
+
+```{r all years 2, echo=FALSE}
+
+plot_grid(image_list[[1]], 
+          image_list[[2]], 
+          image_list[[3]],
+          image_list[[4]], 
+          labels = lf[1:4], 
+          label_size = 5)
+
+```
+
+# 1960s
+
+```{r 1960s, echo=FALSE}
+
+lf <- list.files(path = "../output/tests/CONUS/", pattern = ".*1960_.*.png", full.names = TRUE)
+
+image_list <- lapply(lf, function(x){
+ x %>% 
+    image_read() %>% 
+    rasterGrob()
+})
+
+plot_grid(image_list[[4]],
+          labels = lf[4],
+          label_size = 5)
+
+```
+\newpage
+
+```{r 1960s 2, echo=FALSE}
+
+plot_grid(image_list[[1]], 
+          image_list[[2]], 
+          image_list[[3]],
+          image_list[[4]], 
+          labels = lf[1:4], 
+          label_size = 5)
+
+```
+
+
+# 1970s
+
+```{r 1970s, echo=FALSE}
+
+lf <- list.files(path = "../output/tests/CONUS/", pattern = ".*1970_.*.png", full.names = TRUE)
+
+image_list <- lapply(lf, function(x){
+ x %>% 
+    image_read() %>% 
+    rasterGrob()
+
+})
+
+plot_grid(image_list[[4]],
+          labels = lf[4],
+          label_size = 5)
+
+```
+\newpage
+
+```{r 1970s 2, echo=FALSE}
+
+plot_grid(image_list[[1]], 
+          image_list[[2]], 
+          image_list[[3]],
+          image_list[[4]], 
+          labels = lf[1:4], 
+          label_size = 5)
+
+```
+
+# 1980s
+
+```{r 1980s, echo=FALSE}
+
+lf <- list.files(path = "../output/tests/CONUS/", pattern = ".*1980_.*.png", full.names = TRUE)
+
+image_list <- lapply(lf, function(x){
+ x %>% 
+    image_read() %>% 
+    rasterGrob()
+
+})
+
+plot_grid(image_list[[4]],
+          labels = lf[4],
+          label_size = 5)
+
+```
+\newpage
+
+```{r 1980s 2, echo=FALSE}
+
+plot_grid(image_list[[1]], 
+          image_list[[2]], 
+          image_list[[3]],
+          image_list[[4]], 
+          labels = lf[1:4], 
+          label_size = 5)
+
+```
+
+# 1990s
+
+```{r 1990s, echo=FALSE}
+
+lf <- list.files(path = "../output/tests/CONUS/", pattern = ".*1990_.*.png", full.names = TRUE)
+
+image_list <- lapply(lf, function(x){
+ x %>% 
+    image_read() %>% 
+    rasterGrob()
+
+})
+
+plot_grid(image_list[[4]],
+          labels = lf[4],
+          label_size = 5)
+
+```
+\newpage
+
+```{r 1990s 2, echo=FALSE}
+
+plot_grid(image_list[[1]], 
+          image_list[[2]], 
+          image_list[[3]],
+          image_list[[4]], 
+          labels = lf[1:4], 
+          label_size = 5)
+
+```
+
+# 2000s
+
+```{r 2000s, echo=FALSE}
+
+lf <- list.files(path = "../output/tests/CONUS/", pattern = ".*2000_.*.png", full.names = TRUE)
+
+image_list <- lapply(lf, function(x){
+ x %>% 
+    image_read() %>% 
+    rasterGrob()
+
+})
+
+plot_grid(image_list[[4]],
+          labels = lf[4],
+          label_size = 5)
+
+```
+\newpage
+
+```{r 2000s 2, echo=FALSE}
+
+plot_grid(image_list[[1]], 
+          image_list[[2]], 
+          image_list[[3]],
+          image_list[[4]], 
+          labels = lf[1:4], 
+          label_size = 5)
+
+```
+
+# 2010s
+
+```{r 2010s, echo=FALSE}
+
+lf <- list.files(path = "../output/tests/CONUS/", pattern = ".*2010_.*.png", full.names = TRUE)
+
+image_list <- lapply(lf, function(x){
+ x %>% 
+    image_read() %>% 
+    rasterGrob()
+
+})
+
+plot_grid(image_list[[4]],
+          labels = lf[4],
+          label_size = 5)
+
+```
+\newpage
+
+```{r 2010s 2, echo=FALSE}
+
+plot_grid(image_list[[1]], 
+          image_list[[2]], 
+          image_list[[3]],
+          image_list[[4]], 
+          labels = lf[1:4], 
+          label_size = 5)
+
+```
+
+# 2020s
+
+```{r 2020s, echo=FALSE}
+
+lf <- list.files(path = "../output/tests/CONUS/", pattern = ".*2020_.*.png", full.names = TRUE)
+
+image_list <- lapply(lf, function(x){
+ x %>% 
+    image_read() %>% 
+    rasterGrob()
+
+})
+
+plot_grid(image_list[[4]],
+          labels = lf[4],
+          label_size = 5)
+
+```
+\newpage
+
+```{r 2020s 2, echo=FALSE}
+
+plot_grid(image_list[[1]], 
+          image_list[[2]], 
+          image_list[[3]],
+          image_list[[4]], 
+          labels = lf[1:4], 
+          label_size = 5)
+
+```

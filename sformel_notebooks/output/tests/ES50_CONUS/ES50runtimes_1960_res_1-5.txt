@@ -1,0 +1,6 @@
+"time_diversity_cal" "4.72 sec elapsed"
+"time_plot" "53.48 sec elapsed"
+"time_setup" "1.58 sec elapsed"
+"time_spatial_index_of_data" "6.05 sec elapsed"
+"time_total_run" "74.57 sec elapsed"
+"computer_name" "SFORMEL GFE"
