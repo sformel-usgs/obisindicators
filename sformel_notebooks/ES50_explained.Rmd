@@ -1,0 +1,370 @@
+---
+title: "ES50 Explained"
+author: "Stephen Formel"
+date: "`r Sys.Date()`"
+output: html_document
+header-includes:
+  - \usepackage{leading}
+  - \leading{22pt}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{css style settings, echo = FALSE}
+blockquote {
+    padding: 10px 20px;
+    margin: 0 0 20px;
+    font-size: 12px;
+    border-left: 5px solid #eee;
+}
+```
+# Note from Steve
+
+I haven't had a chance to revise the language given Pieter's comments about how records should be interpreted.  I'm not using any OBIS data yet, so I was using "records" as synonyous with a single observation.
+
+## What is ES50?
+
+In the context of the [_obisindicators_ R package](https://github.com/marinebon/obisindicators), ES50 was developed to help OBIS estimate marine biodiversity richness around the globe.  ES50 can be interpreted as the expected number of species in a random sample of 50 individuals (records). We are not the creators of the index, nor the first to code a function for it (more below), but this function is formulated to work well with OBIS and GBIF data.
+
+There is a brief definition in the [package documentation](https://www.obis.org/indicators/documentation/) for the indicators package, but here we go into more detail for anyone who might not be familiar with the Hurlbert Index, the index that ES50 is based on, and the math behind it.
+
+## Where can I see an example of its use?
+
+Saeedi et al. (2019) calculated ES50 from some OBIS and GBIF datasets, but used the _vegan_ package to calculate it since _obisindicators_ wasn't yet developed.  Table S2 and Figure 3 might be especially helpful to look at.
+
+> Saeedi, H., Simões, M., &#38; Brandt, A. (2019). Endemicity and community composition of marine species along the NW Pacific and the adjacent Arctic Ocean. <i>Progress in Oceanography</i>, <i>178</i>. https://doi.org/10.1016/j.pocean.2019.102199
+
+Pieter Provoost has also created a nice [notebook](https://iobis.github.io/notebook-diversity-indicators/) that demonstrates how to calculate ES50 with OBIS data.  This was a precursor to the obisindicators package so, again, it doesn't use the obisindicators package.
+
+## What paper(s) should you site when using ES50?
+
+The original paper, where Hurlbert published his index, should be cited:
+
+> Hurlbert, S.H. (1971), The Nonconcept of Species Diversity: A Critique and Alternative Parameters. Ecology, 52: 577-586. https://doi.org/10.2307/1934145 
+
+You should also cite any R package you use. A more recent work that explains the Hurlbert Index, along with many other popular diversity indices, is:
+
+> Gotelli, N. J., &#38; Chao, A. (2013). Measuring and Estimating Species Richness, Species Diversity, and Biotic Similarity from Sampling Data. In S. A. Levin (Ed.), <i>Encyclopedia of Biodiversity (Second Edition)</i> (pp. 195–211). Academic Press. https://doi.org/https://doi.org/10.1016/B978-0-12-384719-5.00424-X
+
+In case it's not immediately obvious, the Gotelli and Chao equation (#2) is a slight rearrangement of the Hurlbert equation (#13).
+
+## The Basics
+
+The ES50 is defined in OBIS as the $sum(esi)$ of all species in a collection of observation records, where
+
+- $esi$ is the expected species index of a single species.  For ES50, the $esi$ for a single species would be equal to 1 if you would expect to always find that species in a random sample of 50 individuals from the space/time defined by the collection.
+
+- The collection can be defined by space and time, like the grid cells defined in [this notebook example](https://iobis.github.io/notebook-diversity-indicators/).
+
+Historically, publications have used a variety of symbols to notate the parameters in the Hurlbert Index.  For ES50, we use
+
+- $n$ the total number of records in the collection (i.e. sample area). If you're using data from a database like OBIS, you would need to first [assign the observations to a grid based on their geography](https://iobis.github.io/notebook-diversity-indicators/).  Each cell from that grid would be used as a collection, (AKA sample area, cell, etc.).
+- $n_{i}$ = the total number of records for the $i$th-species.
+
+Calculating the ES50 for a collection of records depends on three conditions:
+
+1. If there are not at least 50 records in the collection then $esi = NULL$ ; ES50 cannot be calculated for this collection.
+
+1. When $n >= 50$ then $esi = 1$ unless...
+1. When $n - n_{i} >= 50$ then $esi$ is calculated as:
+
+    $$esi = 1 - e^{ln \Gamma(n-n_{i}+1) + ln \Gamma(n-50+1) - ln \Gamma(n-n_{i}-50+1) - ln \Gamma(n+1))}$$
+
+
+- The implication of the two bullets above is that if there are not at least 50 records of other species than the one for which $esi$ is being calculated, then there is no need to calculate the $esi$. We would expect to find it at least once in the collection of records, i.e. $esi = 1$ 
+
+- The bottom line is that you need at least 50 records to calculate ES50. $esi$ for a species is equal to 1, unless there are enough records of other species ($n-n_{i} >- 50$ to have an impact on the probability of finding that species in the collection.  
+
+### What does it measure?
+
+ES50 is a richness estimator, but there has been a confusion over whether it qualifies as a diversity estimator. Hurlbert derived the index in the context of richness estimation and Gotelli and Chao (2013) discuss it as a richness estimator. 
+
+But Smith and Grassle (1977) note that,
+
+_"expected species diversity has been called a species richness measure by Peet (1974) and Hurlbert (1971), and a diversity measure by Sanders (1968). This semantic difficulty results in part from confusion between the actual field sample size and the individual index. For fixed individual index in, the expected species measure satisfies Pielou's (1969) description of a diversity measure in that it is dependent on the number of species in the field sample and on the evenness with which the individuals in the field sample are distributed among species. Consistent with the previous discussion then, expected species measures are best described as a family of diversity measures with varying rare-species sensitivities depending on the individual index in."_
+
+> Gotelli, N. J., &#38; Chao, A. (2013). Measuring and Estimating Species Richness, Species Diversity, and Biotic Similarity from Sampling Data. In S. A. Levin (Ed.), <i>Encyclopedia of Biodiversity (Second Edition)</i> (pp. 195–211). Academic Press. https://doi.org/https://doi.org/10.1016/B978-0-12-384719-5.00424-X
+
+> Smith, W., &#38; Frederick Grassle, J. (1977). <i>Sampling Properties of a Family of Diversity Measures</i> (Vol. 33, Issue 2). https://www.jstor.org/stable/2529778
+
+Hurlbert created his index in an attempt to remove the estimation bias of inherent when we sample for species richness. Simply put, [the more organisms you sample, the more likely you are to find more species and conclude a higher species richness](https://data-blog.gbif.org/post/exploring-es50-for-gbif/#species-brichnessb-is-correlated-with-beffortb). So this is a way of reducing that bias, which is important for comparing one sample to another. Some well known diversity indices, like Shannon-Wiener and Hill numbers, are dependent on sample size, so the Hurlbert Index provides a nice counterpoint to conclusions reached from those indices.  If you're interested in more detail on bias in diversity indices, see Dauby and Hardy (2012). 
+
+> Dauby, G., &#38; Hardy, O. J. (2012). Sampled-based estimation of diversity sensu stricto by transforming Hurlbert diversities into effective number of species. <i>Ecography</i>, <i>35</i>(7), 661–672. https://doi.org/https://doi.org/10.1111/j.1600-0587.2011.06860.x
+
+#### Why 50?
+
+The Hurlbert index can be calculated for any number of individuals in a collection, so why choose 50? 
+
+The unsatisfying answer is that it is somewhat arbitrary.  If the number of individuals you choose to sample from each collection is too small (e.g. 5), you may be underestimating richness.  However, sampling takes effort, and if you choose a number that is too high (e.g. 1,000,000) you may be forced to discard from the analysis those collections that don't have enough individuals.  
+
+You can visualize this by generating "rarefaction" curves, which will help you find the sweet spot that includes as many samples as possible without underestimating richness.  A good example of this type of analysis is Rosenberg et al. (2004).  In section 2.1 they describe why they chose ES50 over ES100.
+
+> Rosenberg, R., Blomqvist, M., Nilsson, H. C., Cederwall, H., &#38; Dimming, A. (2004). Marine quality assessment by use of benthic species-abundance distributions: A proposed new protocol within the European Union Water Framework Directive. <i>Marine Pollution Bulletin</i>, <i>49</i>(9–10), 728–739. https://doi.org/10.1016/j.marpolbul.2004.05.013
+
+### What are the assumptions and limitations?
+
+ES50 assumes:
+
+- that there are at least 50 individuals per sample, that individuals are randomly distributed
+- the sample size is sufficiently large
+- the samples are taxonomically similar
+- that all of the samples have been taken in the same manner.  
+
+To quote Hurlbert's original paper, 
+
+> Such comparisons will have greatest validity when each collection is comprised either of all individuals in a  given area, size of area being the same for each collection, or of a truly random sample of these individuals. If this method is  applied to other types of collections, interpretation of results will be less conclusive.
+
+HUrlbert's statement is probably generally applicable to all diversity estimators.  Still it's worth pointing out that sampling bias (i.e. samples are not representative of a community) is a problem that should be avoided when possible.
+
+[John Waller also points out](https://data-blog.gbif.org/post/exploring-es50-for-gbif/) that, _"ES50 does sometimes produce nicer looking maps...but it does not give us what most people want - species counts. Unfortunately very few taxonomic groups (i.e. probably only birds) are well-sampled enough globally to produce species-count maps that are not mirrored occurrence count graphs."_
+
+Returning to Dauby and Hardy (2012), their focus is transforming the Hurlbert Index into _effective number of species_, analogous to Hill numbers.  While this still wouldn't be species richness, transforming the ES50 to _effective number of species_ might make it slightly more intuitive and palatable to the layperson.
+
+### Some Plots to Visualize Its Properties
+
+```{r plots of ES50 variation, warning=FALSE, message=FALSE}
+
+library(vegan)
+library(tidyverse)
+library(obisindicators)
+
+#View how ES50 of an even community is affected by sampling effort
+
+species <- rep(c(1:50), 50)
+records <- rep(c(1:50), each = 50)
+cell <- rep(c(1:50), each = 50)
+fake.df <- data.frame(species, cell, records)
+
+results <- list()  
+
+for (i in 1:50){
+  
+  results[[i]] <- obisindicators::calc_indicators(fake.df, 
+                                           esn = 50)
+  }
+
+
+results <- data.table::rbindlist(results)
+head(results)
+
+#Plot ES50 against abundance of each species
+
+ggplot(data = results %>% 
+         gather(key = "Index", value = "Value", sp:hill_inf) %>% 
+         filter(Index %in% c("es", "shannon", "simpson", "sp")), 
+       aes(x = cell, 
+           y = Value,
+           color = Index)) +
+  geom_point(size = 2) +
+  geom_line() +
+  theme_bw() +
+  labs(x = "Number of Records For Each Species",
+       title = "Effect of Sampling Effort on an Even Community") +
+  scale_color_manual(values = RColorBrewer::brewer.pal(n = 4, name = "Set2"),
+                     labels = c("ES50", "Shannon-Wiener", "Simpson", "Richness"))
+
+```
+
+
+_In the above plot we have created 50 perfectly even communities where 50 species have exactly the same number of records) but increased the number of total records in increments of one. So the points corresponding to one on the x-axis are communities of 50 species, where each species was found once.  The points corresponding to 30 on the x-axis are communities of 50 species, where each species was found 30 times.  The important thing to notice is that ES50 is the only index that responds to sampling effort, which is an acknowledgment that even if the communities are perfectly even, the more total organisms sampled, the less likely we are to observe all of them in a sample of 50 individuals.  According to this, we would be likely to observe somewhere between 30-40 species in a sample of 50 individuals._
+
+_A few more notes: Because these communities are perfectly even, richness is the same no matter how many records exist.  It's worth pointing out that when communities are perfectly even, Hill numbers (not shown) always equal richness. Likewise, Simpson and Shannon indices do not vary with sampling effort, but have lower values because these indices are relative and the values do not represent estimates of a number of species._
+
+
+### Different tools to calculate it
+
+It's clear by now that the _obisindicators_ package is not the first to calculate, or consider ES50.  Here are a few other R tools you can use.
+
+1. obisindicators::calc_indicators()
+1. vegan::rarefy()
+1. benthos::hurlbert()
+1. entropart::bcHurlbert()
+1. Code it yourself: See [Pieter Provoost's notebook](https://iobis.github.io/notebook-diversity-indicators/)
+
+## The Math
+
+### The original Hurlbert Index
+
+In Hurlbert's original paper, he described, "the expected number of species in a  sample of $n$  individuals selected at random from a  collection containing $N$ individuals, $S$ species, and $N_{i}$ individuals in the $i$th species" as
+
+$$E(S_{n}) = \sum\limits_{i = 1}^{S} \left[1 - \displaystyle \frac{\binom{N - N_{i}}{n}}{\binom{N} {n}}\right]$$
+
+Hurlbert defines this equation (No. 13 in his paper) as "the expected number of species in a sample of $n$ individuals selected at random (without replacement) from a collection containing $N$ individuals and $S$ species."
+
+However, the equation in the abstract of Hurlbert's paper is slightly different in the way the summation is notated.  But the two are [more or less interchangeable](https://math.stackexchange.com/questions/1258400/summations-and-integrals-with-no-upper-limits).
+
+$$E(S_{n}) = \sum\limits_{i} \left[1 - \displaystyle \frac{\binom{N - N_{i}}{n}}{\binom{N} {n}}\right]$$
+
+It is some version of this formula that people are referring to when they refer to Hurlbert's index.  But if you look at the math in the obisindicators ES50, it doesn't look quite the same.  For those of us who aren't natural mathematicians, here is how you get from Hurlbert's Index to the _obisindicators_ ES50.
+
+### Connecting the Hurlbert Index to _obisindiciators_ ES50
+
+In R code, this equation looks like this
+
+```
+esi = 1 - exp(gsl::lngamma(n-ni+1) + gsl::lngamma(n-50+1) - gsl::lngamma(n-ni-50+1) - gsl::lngamma(n+1))
+```
+
+#### Binomial Coefficient explained
+
+If you recall from your high shcool math, the binomial coefficient notations is a shorthand for computing the number of $k$-subsets possible out of a set of $q$ distinct items.  It's a way of answering, "if we choose $q$ individuals from a collection containing a total of $k$ individuals, how many subsets of individuals can we choose?"
+
+$$\binom{q} {k} = \frac{q!} {k! (q-k)!}$$
+
+Expanding Hurlbert's binomial coefficient notation leads to this equation:
+
+$$E(S_{n}) = \sum\limits_{i = 1}^{S} \left[1 - \displaystyle \frac{ \frac{(N - N_{i})!} {n!(N - N_{i} - n)!}}{\frac{N!} {n! (N-n)!}}\right]$$
+
+Using Hurlbert's example, just below equation 13 in his paper, we can show how to calculate the case when you have a sample with 1013 individuals and we want to compare the richness to a sample containing 780 individuals.  In this case,
+
+$n$ = 780 ; because this is the max number of individuals we can choose from the other sample with which we wish to compare diversity.
+$N$ = 1013 ; because this is the total number of individuals in the sample we are measuring.
+$S$ = 70 because this is the richness of the sample when we include all individuals.
+
+$$E(S_{n}) = \sum\limits_{i = 1}^{70} \left[1 - \displaystyle \frac{ \frac{(1013 - N_{i})!} {780!(1013 - N_{i} - 780)!}}{\frac{1013!} {780! (1013-780)!}}\right]$$
+
+As a reminder, in this case, $N_{i}$ = the number of individuals in the sample for species $i$
+
+#### Gamma Functions
+
+If you look at the factorial function in R, you'll notice the help talks a lot about gamma functions.  This is because the two are [very similar](https://functions.wolfram.com/GammaBetaErf/LogGamma/introductions/Gammas/ShowAll.html), but gamma ($\Gamma$) functions, specifically the Natural log of gamma, are often used in place of calculating the factorial because it's [computationally friendlier](https://support.minitab.com/en-us/minitab/20/help-and-how-to/calculations-data-generation-and-matrices/calculator/calculator-functions/arithmetic-calculator-functions/gamma-incomplete-gamma-and-natural-log-of-gamma-functions/).
+
+We couldn't calculate the above in R with the "factorial" or the "gamma" function. The limit of the factorial function in R appears to be 170
+
+```{r limit of factorial, echo = TRUE}
+
+factorial(170)
+factorial(171)
+gamma(170)
+gamma(171)
+
+```
+You may have noticed that $factorial(x)$ doesn't equal $gamma(x)$.  Without going into the details why, $factorial(x) == gamma(x+1)$
+
+So it's important to remember that when we substitute the gamma for the factorial function, we also add 1 to x.  So let's do some algebra to simplify the equation and work toward the $lngamma$ function, which will allow us to compute these large numbers. 
+
+First we sub in the gamma function for the factorial. To make things simpler, we'll remove the summation, which is there only tells us to calculate what is inside the brackets for each species and add them all together.
+
+$$E(S_{n}) = 1 - \displaystyle \frac{ \frac{(N - N_{i})!} {n!(N - N_{i} - n)!}}{\frac{N!} {n! (N-n)!}}$$
+
+$$\big\downarrow$$
+
+
+$$E(S_{n}) = 1 - \displaystyle \frac{ \frac{\Gamma(N - N_{i} + 1)} {\Gamma(n + 1)\Gamma((N - N_{i} - n + 1)}}{\frac{\Gamma(N + 1)} {\Gamma(n + 1) \Gamma(N-n + 1)}}$$
+
+You may have noticed that we are multiplying by $\Gamma(n + 1)$ in both the numerator and denominator of the fraction.  Let's flip the fraction to make it easier to see and then simplify it.
+
+$$E(S_{n}) = 1 - \displaystyle \frac{\Gamma(N - N_{i} + 1)} {\Gamma(n + 1)\Gamma((N - N_{i} - n + 1)}{\frac{\Gamma(n + 1) \Gamma(N-n + 1)} {\Gamma(N + 1)}}$$
+
+$$\big\downarrow$$
+
+$$E(S_{n}) = 1 - \displaystyle \frac{\Gamma(N - N_{i} + 1)} {\Gamma((N - N_{i} - n + 1)}{\frac{\Gamma(N-n + 1)} {\Gamma(N + 1)}}$$
+
+Since we're trying to arrive at the equation used in obisindicators, we'll go ahead and substitute 50 in for $n$, since we know that we intend to calculate ES50, or the Hurlbert Index when 50 individuals are chosen at random.
+
+$$E(S_{n}) = 1 - \displaystyle \frac{\Gamma(N - N_{i} + 1)} {\Gamma((N - N_{i} - 50 + 1)}{\frac{\Gamma(N - 50 + 1)} {\Gamma(N + 1)}}$$
+
+You should be able to see now that we have four terms that match the terms from the obisindicators code, but they are still part of fractions, and they are inside of a gamma function, not a lngamma function.  We can use the trick of $e^{ln(x)} = x$ to apply the $ln$ to our $gamma functions$ and add the "exp" part of the code.
+
+I know you're on tenterhooks, because where where we're headed is:
+
+$$E(S_{n}) = 1 - e^{ln(x)}$$
+
+#### Applying the Natural log
+
+The next step is to apply the $ln$ to our fractions, so we can simplify it some more with algebra. Dust off your high school brain and remember that the log multiplication and division can be transformed to:
+
+$$ln(xy) = ln(x) + ln(y)$$
+
+$$ln(\frac{x}{y}) = ln(x) - ln(y)$$
+
+Therefore...
+
+$$\displaystyle ln\left(\frac{\Gamma(N - N_{i} + 1)} {\Gamma((N - N_{i} - 50 + 1)}{\frac{\Gamma(N - 50 + 1)} {\Gamma(N + 1)}}\right)$$
+
+
+$$\big\downarrow$$
+
+$$\displaystyle ln\Gamma(N - N_{i} + 1) - ln\Gamma(N - N_{i} - 50 + 1) + ln\Gamma(N - 50 + 1) - ln\Gamma(N + 1)$$
+
+This entire term then is the exponential $ln(x)$ above. So our final equation (reordering the terms to match the obisindicators code) is:
+
+$$E(S_{n}) = 1 - e^{\left(ln\Gamma(N - N_{i} + 1) + ln\Gamma(N - 50 + 1) - ln\Gamma(N - N_{i} - 50 + 1) - ln\Gamma(N + 1)\right)}$$
+
+For comparison, the obisindicators code:
+
+```
+esi = 1 - exp(lngamma(n-ni+1) + lngamma(n-50+1) - lngamma(n-ni-50+1) - lngamma(n+1))
+```
+
+## Comparing Tools
+
+```{r BCI test, warning=FALSE, message=FALSE}
+
+library(vegan)
+library(tidyverse)
+library(benthos)
+library(entropart)
+
+data(BCI)
+results <- data.frame(Collection_Num = c(1:50))
+
+#Vegan
+results$vegan <- vegan::rarefy(BCI, sample = 50)
+
+#Obisindicators
+BCI$cell <- as.numeric(rownames(BCI))
+
+long.df <- BCI %>%
+  pivot_longer(cols = c(everything(), -cell)) %>% 
+  rename("species" = name, "records" = value)
+  
+results$obisindicators <- obisindicators::calc_indicators(long.df, esn = 50) %>% 
+  select(es) %>% 
+  unlist()
+
+#Benthos
+benthos.df <- long.df %>% 
+  pivot_wider(names_from = cell, 
+              values_from = records)
+  
+for (i in 2:ncol(benthos.df)){
+  results$benthos[i-1] <- benthos::hurlbert(taxon = benthos.df$species,
+                                          count = benthos.df[[i]],
+                                          n = 50)} 
+
+#Entropart
+entropart.df <- as.data.frame(t(BCI))
+
+for (i in 1:ncol(entropart.df)){
+  results$entropart[i] <- entropart::bcHurlbert(Ns = entropart.df[,i], k = 50)}
+
+head(results)
+```
+
+Plot.
+
+```{r plot comparison, warning=FALSE, echo = FALSE}
+ggplot(data = results %>% 
+         gather(key = "Tool", 
+                value = "ES50", 
+                vegan:entropart, factor_key = TRUE),
+       aes(x = Tool, 
+           y = ES50, 
+           fill = Tool)) +
+  geom_point(alpha = 0.5,
+             size = 3,
+             color = "black",
+             shape = 21) +
+  theme_bw() +
+  coord_cartesian(ylim = c(25, 30))
+  
+```
+
+## Some thoughts...
+
+1. entropart::bcHurlbert is the only function that produces a slightly different value from the others. I suspect this is because of rounding, or some subfunction being slightly different than the other three.  It would be interesting to look into this.
+
+1. Until now, I didn't think too much about how Hurlbert would consider a counted absence, but I don't think they are included, although perhaps they should be?  On the other hand, I know absence data is still under discussion in OBIS data too. I wouldn't be surprised if someone has already?
