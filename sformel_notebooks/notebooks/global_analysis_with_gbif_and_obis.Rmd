@@ -67,7 +67,7 @@ We created maps with both continuous color schemes and with binned color schemes
 
 |Continuous Color | Discrete Color |
 |----|----|
-|<img src="../output/tests/ES100_CONUS/ES100_CONUS_2010_res_5_discrete.png" alt="Continuous color scale - ES100_CONUS_2010_res_5" width="95%"/>|<img src="../output/tests/ES100_CONUS/ES100_CONUS_2010_res_5_discrete.png" alt="Discrete color scale - ES100_CONUS_2010_res_5" width="95%"/>|
+|<img src="../output/tests/ES100_CONUS/ES100_CONUS_2010_res_5.png" alt="Continuous color scale - ES100_CONUS_2010_res_5" width="95%"/>|<img src="../output/tests/ES100_CONUS/ES100_CONUS_2010_res_5_discrete.png" alt="Discrete color scale - ES100_CONUS_2010_res_5" width="95%"/>|
 
 
 ### Hurlbert Index (ESi) vs Traditional Biodiversity metrics
