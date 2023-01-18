@@ -22,7 +22,7 @@ blockquote {
 ```
 # Note from Steve
 
-I haven't had a chance to revise the language given Pieter's comments about how records should be interpreted.  I'm not using any OBIS data yet, so I was using "records" as synonyous with a single observation.
+I haven't had a chance to revise the language given Pieter's comments about how records should be interpreted.  I'm not using any OBIS data yet, so I was using "records" as synonymous with a single observation.
 
 ## What is ES50?
 
@@ -38,7 +38,7 @@ Saeedi et al. (2019) calculated ES50 from some OBIS and GBIF datasets, but used 
 
 Pieter Provoost has also created a nice [notebook](https://iobis.github.io/notebook-diversity-indicators/) that demonstrates how to calculate ES50 with OBIS data.  This was a precursor to the obisindicators package so, again, it doesn't use the obisindicators package.
 
-## What paper(s) should you site when using ES50?
+## What paper(s) should you cite when using ES50?
 
 The original paper, where Hurlbert published his index, should be cited:
 
