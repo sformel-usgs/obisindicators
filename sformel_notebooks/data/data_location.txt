@@ -1,1 +1,0 @@
-One Drive struggled to handle the large volumes of data being used in this project, so the data are kept in an unsynced folder.  However, all raw data can be reproduced by downloading the appropriate GBIF/OBIS snapshots and running code to generate any downstream products.
